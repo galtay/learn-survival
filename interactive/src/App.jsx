@@ -3,6 +3,7 @@ import MathSandbox from './components/MathSandbox';
 import CensoringVisualizer from './components/CensoringVisualizer';
 import RiskSetSweeper from './components/RiskSetSweeper';
 import KaplanMeierInteractive from './components/KaplanMeierInteractive';
+import CoxModelInteractive from './components/CoxModelInteractive';
 
 function App() {
   // Re-render math when component mounts/updates
@@ -31,6 +32,7 @@ function App() {
           <a href="#censoring" style={{color: 'var(--fg-2)', textDecoration: 'none'}}>§2 censoring</a>
           <a href="#risk" style={{color: 'var(--fg-2)', textDecoration: 'none'}}>§3 risk set</a>
           <a href="#km" style={{color: 'var(--fg-2)', textDecoration: 'none'}}>§4 kaplan-meier</a>
+          <a href="#cox" style={{color: 'var(--fg-2)', textDecoration: 'none'}}>§5 cox model</a>
         </div>
       </nav>
 
@@ -207,6 +209,50 @@ function App() {
         <p>
           Note that censoring events do not contribute directly to the product (they are not $t_j$ times), but they do drop the denominator $n(t)$ for all subsequent event times. This means that a subsequent event will cause a larger proportional drop in the survival curve than it would have if the censoring had not occurred. This is visually evident in the interactives above when you toggle a point from an event to being censored!
         </p>
+      </section>
+
+      {/* SECTION 5: COX MODEL */}
+      <section className="sec" id="cox">
+        <div className="head">
+          <span className="id">§ 05</span>
+          <h2>The Cox Proportional Hazards model</h2>
+        </div>
+
+        <p>
+          While the Kaplan–Meier estimator is excellent for estimating survival for a single group, we often want to understand how different variables (covariates) influence survival time. The most common approach is the Cox Proportional Hazards model, introduced by Sir David Cox in 1972.
+        </p>
+
+        <p>
+          Instead of modeling the survival time directly, the Cox model focuses on the hazard function. It splits the hazard into two parts: a <span className="em">baseline hazard</span> $h_0(t)$ that depends only on time, and an exponential multiplier that depends only on the covariates $X$:
+        </p>
+
+        <div className="eq-row">
+          $$ h(t|X) \;=\; h_0(t) \exp\left(\sum_&#123;i=1&#125;^p \beta_i X_i\right) $$
+          <span className="ref">Eq. 5 — The Cox Proportional Hazards model.</span>
+        </div>
+
+        <p>
+          A key feature of this model is the <span className="em">proportional hazards assumption</span>. Notice that if we take the ratio of hazards for two individuals with different covariate values, say $X$ and $X'$, the baseline hazard $h_0(t)$ cancels out completely:
+        </p>
+
+        <div className="eq-row">
+          $$ \frac&#123;h(t|X)&#125;&#123;h(t|X')&#125; \;=\; \frac&#123;h_0(t) \exp(\beta X)&#125;&#123;h_0(t) \exp(\beta X')&#125; \;=\; \exp\big(\beta (X - X')\big) $$
+        </div>
+
+        <p>
+          This hazard ratio is a constant over time! If treatment reduces the hazard by half relative to control at day 10, it also reduces it by half at day 100.
+        </p>
+
+        <p>
+          We can trace this back to the survival function $S(t) = \exp(-H(t))$. Because the hazard is multiplied by a constant $e^&#123;\beta X&#125;$, the cumulative hazard is also multiplied by that constant. This means the survival function for a given covariate profile is simply the baseline survival function raised to a power:
+        </p>
+
+        <div className="eq-row">
+          $$ S(t|X) \;=\; S_0(t)^&#123;\exp(\beta X)&#125; $$
+        </div>
+
+        <CoxModelInteractive />
+
       </section>
 
     </main>
