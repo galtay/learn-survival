@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import MathSandbox from './components/MathSandbox';
+import DensityVisualizer from './components/DensityVisualizer';
 import CensoringVisualizer from './components/CensoringVisualizer';
 import RiskSetSweeper from './components/RiskSetSweeper';
 import KaplanMeierInteractive from './components/KaplanMeierInteractive';
@@ -45,7 +46,7 @@ function App() {
         <h1 className="title">Survival<span className="accent"> /</span> Analysis</h1>
 
         <p className="subtitle">
-          Survival analysis models the time until an event of interest occurs. The field gets its name from its origins in medical research—studying how long patients survive—but its methods are widely applied across many domains, such as mechanical failure in engineering or particle decay in physics. Across all these domains, analysts must frequently address incomplete observations: the reality that subjects are often "censored" before the event of interest can be observed. This introduction bridges the continuous mathematics of survival times to the empirical estimation of survival in the presence of censored data.
+          According to <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2394262/" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Clark et al. (2003)</a>, "Survival analysis is a collection of statistical procedures for data analysis where the outcome variable of interest is time until an event occurs." While we focus on the clinical context in this introduction, these methods are widely applicable across many fields. The defining challenge of survival data is the presence of "censored" observations, which represent a form of partial observability. In these cases, a subject's exact duration between two events is not precisely known, but is instead restricted to a certain range. In right-censoring—the most common type—we only observe a lower bound on a subject's duration. In the clinical context, this often means knowing a patient remained event-free at least up to the time of their last follow-up (such as when they drop out of a study, or when the study ends). This introduction bridges the continuous mathematics of survival durations to the empirical estimators designed to handle such partially observed data.
         </p>
       </header>
 
@@ -57,49 +58,116 @@ function App() {
         </div>
 
         <p>
-          We begin our discussion by modeling the duration of a state or subject as a continuous, positive random variable $T &gt; 0$ (noting that discrete-time models also exist). The distribution of $T$ can be fully specified by any of these related functions:
+          We begin our discussion by modeling the duration of a state or subject as a continuous, positive random variable $T &gt; 0$ (noting that discrete-time models also exist). The distribution of $T$ is fundamentally defined by its probability density function (PDF):
         </p>
 
         <div className="eq-row" style={{marginBottom: '2rem'}}>
           <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Event density function</div>
           $$ f(t)\,dt \;=\; P(T \in [t, t+dt)) $$
           <div className="ref" style={{marginTop: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            The unconditional probability that the event occurs in $[t, t+dt)$.
+            The unconditional probability that the event occurs in the small interval $[t, t+dt)$. Like any valid PDF, it is non-negative ($f(t) \ge 0$) and its total area is exactly 1 ($\int_0^\infty f(t)\,dt = 1$), meaning the event is guaranteed to happen eventually.
           </div>
         </div>
 
+        <p>
+          From this foundational density function, we can derive the other core continuous functions used in survival analysis:
+        </p>
+
         <div className="eq-row" style={{marginBottom: '2rem'}}>
           <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Cumulative event probability</div>
-          $$ F(t) \;=\; \int_0^t f(u)\,du \;=\; P(T \le t) $$
+          {String.raw`$$ F(t) \;=\; \int_0^t f(u)\,du \;=\; P(T < t) $$`}
           <div className="ref" style={{marginTop: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            The probability that the event has occurred by time $t$. It is monotonically increasing with $F(0)=0$ and $F(\infty)=1$.
+            The probability that the event occurs strictly before time $t$. It is monotonically increasing with $F(0)=0$ and $F(\infty)=1$.
           </div>
         </div>
 
         <div className="eq-row">
           <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Survival probability function</div>
-          $$ S(t) \;=\; 1 - F(t) \;=\; P(T &gt; t) $$
+          {String.raw`$$ S(t) \;=\; 1 - F(t) \;=\; \int_t^\infty f(u)\,du \;=\; P(T \ge t) $$`}
           <div className="ref" style={{marginTop: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
             The probability of surviving past time $t$. It is monotonically decreasing with $S(0)=1$ and $S(\infty)=0$.
           </div>
         </div>
 
+        <DensityVisualizer />
+
         <p>
-          Beyond these three core functions, the <span className="em">hazard function</span> $h(t)$ provides the instantaneous event rate conditional on having survived to time $t$. It is formally defined as a limit of a conditional probability, which simplifies to the ratio of the event density to the survival probability:
+          Beyond these three core functions, the <span className="em">hazard function</span> $h(t)$ provides the instantaneous event rate conditional on having survived up to time $t$. We derive it step-by-step from the formal limit of a conditional probability. First, consider the probability of the event occurring in the small interval {String.raw`$[t, t + \Delta t)$`} given survival up to time $t$:
         </p>
 
-        <div className="eq-row">
-          $$ h(t) \;=\; \frac&#123;f(t)&#125;&#123;S(t)&#125; \;=\; -\frac&#123;d&#125;&#123;dt&#125;\log S(t) $$
-          <span className="ref">Eq. 1 — the hazard function definition.</span>
+        <div className="eq-row" style={{marginBottom: '2rem'}}>
+          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Conditional Probability</div>
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            We begin with the general definition of conditional probability:
+          </div>
+          {String.raw`$$ P(A \mid B) \;=\; \frac{P(A \cap B)}{P(B)} $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Here, event $A$ is {String.raw`$t \le T < t + \Delta t$`}, and event $B$ is {String.raw`$T \ge t$`}. Their intersection $A \cap B$ is simply $A$:
+          </div>
+          {String.raw`$$ P(t \le T < t + \Delta t \mid T \ge t) \;=\; \frac{P(t \le T < t + \Delta t)}{P(T \ge t)} $$`}
         </div>
 
         <p>
-          Integrating both sides of this equation yields the cumulative hazard function $H(t)$, which rearranges to a familiar exponential relationship:
+          Now we can substitute this expanded probability into the formal definition of the hazard rate, which is the limit of this probability per unit time as the interval shrinks to zero:
+        </p>
+
+        <div className="eq-row" style={{marginBottom: '2rem'}}>
+          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Hazard Ratio Derivation</div>
+          {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} P(t \le T < t + \Delta t \mid T \ge t) $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Substituting our expanded conditional probability:
+          </div>
+          {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} \frac{P(t \le T < t + \Delta t)}{P(T \ge t)} $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Because the denominator {String.raw`$P(T \ge t)$`} is exactly our survival probability $S(t)$, and it does not depend on {String.raw`$\Delta t$`}, we can pull it out of the limit entirely:
+          </div>
+          {String.raw`$$ h(t) \;=\; \frac{1}{S(t)} \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t)}{\Delta t} $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            The remaining limit is the precise mathematical definition of the event density function $f(t)$. This gives us the core hazard ratio:
+          </div>
+          {String.raw`$$ h(t) \;=\; \frac{f(t)}{S(t)} $$`}
+        </div>
+
+        <p>
+          We can rewrite the hazard ratio into a very useful logarithmic form by establishing the relationship between the event density $f(t)$ and the derivative of the survival probability $S'(t)$:
         </p>
 
         <div className="eq-row">
-          $$ S(t) \;=\; \exp\!\big(-H(t)\big) $$
-          <span className="ref">Eq. 2 — survival and cumulative hazard.</span>
+          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Logarithmic Relationship</div>
+          <div className="ref" style={{marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Recall that the cumulative probability $F(t)$ is the integral of the event density. By the Fundamental Theorem of Calculus, its derivative is exactly the event density:
+          </div>
+          {String.raw`$$ F(t) \;=\; \int_0^t f(u)\,du \quad\implies\quad F'(t) \;=\; f(t) $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Since survival probability is the complement of the cumulative probability ({String.raw`$S(t) = 1 - F(t)$`}), its derivative simply flips the sign:
+          </div>
+          {String.raw`$$ S'(t) \;=\; -F'(t) \;=\; -f(t) $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Substituting $-S'(t)$ for $f(t)$ in our hazard ratio:
+          </div>
+          {String.raw`$$ h(t) \;=\; \frac{-S'(t)}{S(t)} \;=\; -\left( \frac{S'(t)}{S(t)} \right) $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Finally, we apply the chain rule for the natural logarithm, {String.raw`$\frac{d}{dt}\log(g(t)) = \frac{g'(t)}{g(t)}$`}. Substituting $g(t) = S(t)$ yields our final, fundamental definition:
+          </div>
+          {String.raw`$$ h(t) \;=\; -\frac{d}{dt}\log S(t) $$`}
+          <span className="ref" style={{marginTop: '12px', display: 'block'}}>Eq. 1 — the hazard function definition.</span>
+        </div>
+
+        <div className="eq-row">
+          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Cumulative Hazard</div>
+          <div className="ref" style={{marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            If we take our logarithmic definition {String.raw`$h(t) = -\frac{d}{dt}\log S(t)$`} and integrate both sides from $0$ to $t$:
+          </div>
+          {String.raw`$$ \int_0^t h(u)\,du \;=\; -\int_0^t \frac{d}{du} \log S(u)\,du $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            The left side defines the cumulative hazard $H(t)$. By the Fundamental Theorem of Calculus, the right side evaluates to the difference at the boundaries:
+          </div>
+          {String.raw`$$ H(t) \;=\; -\Big( \log S(t) - \log S(0) \Big) $$`}
+          <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
+            Since survival at time zero is certain ($S(0) = 1$), $\log S(0) = 0$. This simplifies to {String.raw`$H(t) = -\log S(t)$`}. Exponentiating both sides yields our second fundamental relationship:
+          </div>
+          {String.raw`$$ S(t) \;=\; \exp[-H(t)] $$`}
+          <span className="ref" style={{marginTop: '12px', display: 'block'}}>Eq. 2 — survival and cumulative hazard.</span>
         </div>
 
         <p>
@@ -227,7 +295,7 @@ function App() {
         </p>
 
         <div className="eq-row">
-          $$ h(t|X) \;=\; h_0(t) \exp\left(\sum_&#123;i=1&#125;^p \beta_i X_i\right) $$
+          {String.raw`$$ h(t|X) \;=\; h_0(t) \exp\left(\sum_{i=1}^p \beta_i X_i\right) $$`}
           <span className="ref">Eq. 5 — The Cox Proportional Hazards model.</span>
         </div>
 
@@ -236,7 +304,7 @@ function App() {
         </p>
 
         <div className="eq-row">
-          $$ \frac&#123;h(t|X)&#125;&#123;h(t|X')&#125; \;=\; \frac&#123;h_0(t) \exp(\beta X)&#125;&#123;h_0(t) \exp(\beta X')&#125; \;=\; \exp\big(\beta (X - X')\big) $$
+          {String.raw`$$ \frac{h(t|X)}{h(t|X')} \;=\; \frac{h_0(t) \exp(\beta X)}{h_0(t) \exp(\beta X')} \;=\; \exp[\beta (X - X')] $$`}
         </div>
 
         <p>
@@ -244,11 +312,11 @@ function App() {
         </p>
 
         <p>
-          We can trace this back to the survival function $S(t) = \exp(-H(t))$. Because the hazard is multiplied by a constant $e^&#123;\beta X&#125;$, the cumulative hazard is also multiplied by that constant. This means the survival function for a given covariate profile is simply the baseline survival function raised to a power:
+          We can trace this back to the survival function {String.raw`$S(t) = \exp[-H(t)]$`}. Because the hazard is multiplied by a constant {String.raw`$e^{\beta X}$`}, the cumulative hazard is also multiplied by that constant. This means the survival function for a given covariate profile is simply the baseline survival function raised to a power:
         </p>
 
         <div className="eq-row">
-          $$ S(t|X) \;=\; S_0(t)^&#123;\exp(\beta X)&#125; $$
+          {String.raw`$$ S(t|X) \;=\; S_0(t)^{\exp(\beta X)} $$`}
         </div>
 
         <CoxModelInteractive />

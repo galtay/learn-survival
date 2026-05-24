@@ -20,8 +20,10 @@ const MathSandbox = () => {
       const h = (k / lambda) * Math.pow(safeT / lambda, k - 1);
       const f = h * s;
       const F = 1 - s;
+      const H = Math.pow(safeT / lambda, k);
+      const logS = -H;
       
-      pts.push({ t, f, F, s, h });
+      pts.push({ t, f, F, s, h, H, logS });
     }
     return pts;
   }, [k, lambda]);
@@ -49,6 +51,15 @@ const MathSandbox = () => {
   const FPath = makePath(data, d => d.F, 1.0);
   const SPath = makePath(data, d => d.s, 1.0);
   const hPath = makePath(data, d => d.h, 0.22); // scale relative to original plot
+  const HPath = makePath(data, d => d.H, 6.0); // max H around (30/16.8)^3 ~ 5.6
+  
+  // Custom path for log S(t) to map 0 to top, -6 to bottom
+  const logSPath = data.map((d, i) => {
+    const x = scaleX(d.t);
+    const y = yMax - ((d.logS + 6) / 6.0) * (yMax - my);
+    const clampedY = Math.max(0, Math.min(y, yMax));
+    return `${i === 0 ? 'M' : 'L'} ${x} ${clampedY}`;
+  }).join(' ');
 
   return (
     <div className="interactive-widget">
@@ -81,7 +92,7 @@ const MathSandbox = () => {
       </div>
       
       <div className="canvas">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 608" className="fourfns-svg diagram-svg" role="img" aria-label="Four functions sandbox">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 872" className="fourfns-svg diagram-svg" role="img" aria-label="Six functions sandbox">
           
           {/* Panel f(t) */}
           <g>
@@ -107,7 +118,7 @@ const MathSandbox = () => {
           {/* Panel F(t) */}
           <g transform="translate(384, 0)">
             <text x="68" y="42" className="panel-title">F(t)</text>
-            <text x="370" y="42" className="panel-expr" textAnchor="end">P(T ≤ t)</text>
+            <text x="370" y="42" className="panel-expr" textAnchor="end">P(T &lt; t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
             <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
             <text x="62" y="237.5" className="tick-label" textAnchor="end">0.00</text>
@@ -128,7 +139,7 @@ const MathSandbox = () => {
           {/* Panel S(t) */}
           <g transform="translate(0, 264)">
             <text x="68" y="42" className="panel-title">S(t)</text>
-            <text x="370" y="42" className="panel-expr" textAnchor="end">P(T &gt; t) = 1 − F(t)</text>
+            <text x="370" y="42" className="panel-expr" textAnchor="end">P(T &ge; t) = 1 − F(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
             <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
             <text x="62" y="237.5" className="tick-label" textAnchor="end">0.00</text>
@@ -167,14 +178,55 @@ const MathSandbox = () => {
             <path d={hPath} className="curve"/>
           </g>
           
-          <text x="396" y="556" className="caption2" style={{fill: 'var(--fg-2)', fontSize: '11.5px', fontFamily: 'var(--sans)'}} textAnchor="middle">
+          {/* Panel H(t) */}
+          <g transform="translate(0, 528)">
+            <text x="68" y="42" className="panel-title">H(t)</text>
+            <text x="370" y="42" className="panel-expr" textAnchor="end">cumulative hazard</text>
+            <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
+            <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
+            <text x="62" y="237.5" className="tick-label" textAnchor="end">0</text>
+            <line x1="68" y1="143" x2="370" y2="143" className="grid"/>
+            <text x="62" y="146.5" className="tick-label" textAnchor="end">3</text>
+            <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
+            <text x="62" y="55.5" className="tick-label" textAnchor="end">6</text>
+            
+            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
+            
+            <path d={HPath} className="curve"/>
+          </g>
+
+          {/* Panel log S(t) */}
+          <g transform="translate(384, 528)">
+            <text x="68" y="42" className="panel-title">log S(t)</text>
+            <text x="370" y="42" className="panel-expr" textAnchor="end">−H(t)</text>
+            <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
+            <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
+            <text x="62" y="237.5" className="tick-label" textAnchor="end">−6</text>
+            <line x1="68" y1="143" x2="370" y2="143" className="grid"/>
+            <text x="62" y="146.5" className="tick-label" textAnchor="end">−3</text>
+            <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
+            <text x="62" y="55.5" className="tick-label" textAnchor="end">0</text>
+            
+            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
+            
+            <path d={logSPath} className="curve"/>
+          </g>
+          
+          <text x="396" y="820" className="caption2" style={{fill: 'var(--fg-2)', fontSize: '11.5px', fontFamily: 'var(--sans)'}} textAnchor="middle">
             Interactive: Drag the sliders to see how shape $k$ and scale $\lambda$ alter the continuous functions.
           </text>
         </svg>
       </div>
       <div className="caption">
-        <span className="label" style={{color: 'var(--fg)', textTransform: 'uppercase', letterSpacing: '0.13em', marginRight: '0.6em'}}>Interactive 1</span>
-        The functions $f$, $F$, $S$, and $h$ linked dynamically. Watch how a decreasing hazard ($k &lt; 1$) fundamentally reshapes the survival probability.
+        The functions $f$, $F$, $S$, $h$, $H$, and $\log S$ linked dynamically. Watch how a decreasing hazard ($k &lt; 1$) fundamentally reshapes the survival probability.
       </div>
     </div>
   );
