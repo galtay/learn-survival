@@ -92,30 +92,22 @@ function App() {
         <DensityVisualizer />
 
         <p>
-          Beyond these three core functions, the <span className="em">hazard function</span> $h(t)$ provides the instantaneous event rate conditional on having survived up to time $t$. We derive it step-by-step from the formal limit of a conditional probability. First, consider the probability of the event occurring in the small interval {String.raw`$[t, t + \Delta t)$`} given survival up to time $t$:
+          Beyond these three core functions, the <span className="em">hazard function</span> $h(t)$ provides the instantaneous event rate conditional on having survived up to time $t$. We can express this formally as the limit of the probability of an event occurring in the small interval {String.raw`$[t, t + \Delta t)$`}, given survival up to time $t$, per unit time as the interval shrinks to zero:
         </p>
 
         <div className="eq-row" style={{marginBottom: '2rem'}}>
-          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Conditional Probability</div>
+          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Hazard Function Derivation</div>
+          {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} P(t \le T < t + \Delta t \mid T \ge t) $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            We begin with the general definition of conditional probability:
+            To simplify this, we first apply the general definition of conditional probability:
           </div>
           {String.raw`$$ P(A \mid B) \;=\; \frac{P(A \cap B)}{P(B)} $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
             Here, event $A$ is {String.raw`$t \le T < t + \Delta t$`}, and event $B$ is {String.raw`$T \ge t$`}. Their intersection $A \cap B$ is simply $A$:
           </div>
           {String.raw`$$ P(t \le T < t + \Delta t \mid T \ge t) \;=\; \frac{P(t \le T < t + \Delta t)}{P(T \ge t)} $$`}
-        </div>
-
-        <p>
-          Now we can substitute this expanded probability into the formal definition of the hazard rate, which is the limit of this probability per unit time as the interval shrinks to zero:
-        </p>
-
-        <div className="eq-row" style={{marginBottom: '2rem'}}>
-          <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Hazard Ratio Derivation</div>
-          {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} P(t \le T < t + \Delta t \mid T \ge t) $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            Substituting our expanded conditional probability:
+            Substituting our expanded conditional probability back into the hazard limit:
           </div>
           {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} \frac{P(t \le T < t + \Delta t)}{P(T \ge t)} $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
@@ -123,13 +115,13 @@ function App() {
           </div>
           {String.raw`$$ h(t) \;=\; \frac{1}{S(t)} \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t)}{\Delta t} $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            The remaining limit is the precise mathematical definition of the event density function $f(t)$. This gives us the core hazard ratio:
+            The remaining limit is the precise mathematical definition of the event density function $f(t)$. This gives us the core hazard function:
           </div>
           {String.raw`$$ h(t) \;=\; \frac{f(t)}{S(t)} $$`}
         </div>
 
         <p>
-          We can rewrite the hazard ratio into a very useful logarithmic form by establishing the relationship between the event density $f(t)$ and the derivative of the survival probability $S'(t)$:
+          We can rewrite the hazard function into a very useful logarithmic form by establishing the relationship between the event density $f(t)$ and the derivative of the survival probability $S'(t)$:
         </p>
 
         <div className="eq-row">
@@ -143,11 +135,11 @@ function App() {
           </div>
           {String.raw`$$ S'(t) \;=\; -F'(t) \;=\; -f(t) $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            Substituting $-S'(t)$ for $f(t)$ in our hazard ratio:
+            Substituting $-S'(t)$ for $f(t)$ in our hazard function:
           </div>
           {String.raw`$$ h(t) \;=\; \frac{-S'(t)}{S(t)} \;=\; -\left( \frac{S'(t)}{S(t)} \right) $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            Finally, we apply the chain rule for the natural logarithm, {String.raw`$\frac{d}{dt}\log(g(t)) = \frac{g'(t)}{g(t)}$`}. Substituting $g(t) = S(t)$ yields our final, fundamental definition:
+            Finally, we apply the chain rule for the natural logarithm, {String.raw`$\frac{d}{dt}\log(g(t)) = \frac{g'(t)}{g(t)}$`}. Substituting $g(t) = S(t)$ yields another useful representation:
           </div>
           {String.raw`$$ h(t) \;=\; -\frac{d}{dt}\log S(t) $$`}
           <span className="ref" style={{marginTop: '12px', display: 'block'}}>Eq. 1 — the hazard function definition.</span>
