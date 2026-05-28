@@ -15,8 +15,8 @@ const KaplanMeierInteractive = () => {
   const kmData = useMemo(() => {
     const sorted = [...cohort].sort((a, b) => a.y - b.y);
     let currentS = 1;
-    let n = cohort.length;
-    const steps = [{ t: 0, S: 1, n: n, d: 0, c: 0 }];
+    let r = cohort.length;
+    const steps = [{ t: 0, S: 1, r: r, d: 0, c: 0 }];
 
     let i = 0;
     while (i < sorted.length) {
@@ -32,16 +32,16 @@ const KaplanMeierInteractive = () => {
       }
 
       if (d_t > 0) {
-        currentS = currentS * (1 - d_t / n);
+        currentS = currentS * (1 - d_t / r);
       }
       
-      steps.push({ t, S: currentS, n, d: d_t, c: c_t });
-      n = n - d_t - c_t;
+      steps.push({ t, S: currentS, r, d: d_t, c: c_t });
+      r = r - d_t - c_t;
     }
     
     // Add end point to carry step function to max time
     if (steps[steps.length - 1].t < 28) {
-      steps.push({ t: 28, S: currentS, n: 0, d: 0, c: 0 });
+      steps.push({ t: 28, S: currentS, r: 0, d: 0, c: 0 });
     }
 
     return steps;

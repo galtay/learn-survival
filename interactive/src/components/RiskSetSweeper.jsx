@@ -43,7 +43,7 @@ const RiskSetSweeper = () => {
     setIsPlaying(!isPlaying);
   };
 
-  const n_t = cohort.filter(p => p.y >= t).length;
+  const r_t = cohort.filter(p => p.y >= t).length;
 
   return (
     <div className="interactive-widget">
@@ -65,7 +65,7 @@ const RiskSetSweeper = () => {
         </div>
         
         <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '15px', color: 'var(--accent)' }}>
-          n({t.toFixed(1)}) = {n_t}
+          r({t.toFixed(1)}) = {r_t}
         </div>
       </div>
       

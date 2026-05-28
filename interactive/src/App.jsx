@@ -48,6 +48,24 @@ function App() {
         <p className="subtitle">
           According to <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2394262/" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Clark et al. (2003)</a>, "Survival analysis is a collection of statistical procedures for data analysis where the outcome variable of interest is time until an event occurs." While we focus on the clinical context in this introduction, these methods are widely applicable across many fields. The defining challenge of survival data is the presence of "censored" observations, which represent a form of partial observability. In these cases, a subject's exact duration between two events is not precisely known, but is instead restricted to a certain range. In right-censoring—the most common type—we only observe a lower bound on a subject's duration. In the clinical context, this often means knowing a patient remained event-free at least up to the time of their last follow-up (such as when they drop out of a study, or when the study ends). This introduction bridges the continuous mathematics of survival durations to the empirical estimators designed to handle such partially observed data.
         </p>
+
+        <div className="reference-callout" style={{marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-2)', borderLeft: '3px solid var(--accent)', borderRadius: '4px'}}>
+          <h3 style={{margin: '0 0 1rem 0', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-2)'}}>References & Recommended Reading</h3>
+          <p style={{margin: '0 0 1rem 0', fontSize: '15px'}}>
+            Much of the material and notation in this interactive explorable is derived from the following comprehensive works:
+          </p>
+          <ul style={{margin: 0, paddingLeft: '1.5rem', fontSize: '15px', color: 'var(--fg-1)', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+            <li>
+              <a href="https://arxiv.org/abs/1708.04649" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Machine Learning for Survival Analysis: A Survey</a> (Wang et al., 2017)
+            </li>
+            <li>
+              <a href="https://arxiv.org/abs/2305.14961" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Deep Learning for Survival Analysis: A Review</a> (Wiegrebe et al., 2023)
+            </li>
+            <li>
+              <a href="https://arxiv.org/abs/2410.01086" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>An Introduction to Deep Survival Analysis Models for Predicting Time-to-Event Outcomes</a> (Chen, 2024)
+            </li>
+          </ul>
+        </div>
       </header>
 
       {/* SECTION 1: MATH */}
@@ -65,7 +83,7 @@ function App() {
           <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Event density function</div>
           $$ f(t)\,dt \;=\; P(T \in [t, t+dt)) $$
           <div className="ref" style={{marginTop: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            The unconditional probability that the event occurs in the small interval $[t, t+dt)$. Like any valid PDF, it is non-negative ($f(t) \ge 0$) and its total area is exactly 1 ($\int_0^\infty f(t)\,dt = 1$), meaning the event is guaranteed to happen eventually.
+            The unconditional probability that the event occurs in the small interval $[t, t+dt)$. Like any valid PDF, it is non-negative ($f(t) \ge 0$) and its total area is 1 ($\int_0^\infty f(t)\,dt = 1$), meaning the event is guaranteed to happen eventually.
           </div>
         </div>
 
@@ -111,7 +129,7 @@ function App() {
           </div>
           {String.raw`$$ h(t) \;=\; \lim_{\Delta t \to 0} \frac{1}{\Delta t} \frac{P(t \le T < t + \Delta t)}{P(T \ge t)} $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            Because the denominator {String.raw`$P(T \ge t)$`} is exactly our survival probability $S(t)$, and it does not depend on {String.raw`$\Delta t$`}, we can pull it out of the limit entirely:
+            Because the denominator {String.raw`$P(T \ge t)$`} is the survival probability $S(t)$, and it does not depend on {String.raw`$\Delta t$`}, we can pull it out of the limit entirely:
           </div>
           {String.raw`$$ h(t) \;=\; \frac{1}{S(t)} \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t)}{\Delta t} $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
@@ -127,7 +145,7 @@ function App() {
         <div className="eq-row">
           <div style={{color: 'var(--fg-2)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Logarithmic Relationship</div>
           <div className="ref" style={{marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
-            Recall that the cumulative probability $F(t)$ is the integral of the event density. By the Fundamental Theorem of Calculus, its derivative is exactly the event density:
+            Recall that the cumulative probability $F(t)$ is the integral of the event density. By the Fundamental Theorem of Calculus, its derivative is the event density:
           </div>
           {String.raw`$$ F(t) \;=\; \int_0^t f(u)\,du \quad\implies\quad F'(t) \;=\; f(t) $$`}
           <div className="ref" style={{marginTop: '12px', marginBottom: '12px', textTransform: 'none', color: 'var(--fg-1)', fontSize: '14px', letterSpacing: '0'}}>
@@ -170,11 +188,11 @@ function App() {
         
       </section>
 
-      {/* SECTION 2: CENSORING */}
-      <section className="sec" id="censoring">
+      {/* SECTION 2: OBSERVABLES AND RISK SET */}
+      <section className="sec" id="observables">
         <div className="head">
           <span className="id">§ 02</span>
-          <h2>Observables and censoring</h2>
+          <h2>Observables and the risk set</h2>
         </div>
 
         <p>
@@ -203,36 +221,28 @@ function App() {
         <CensoringVisualizer />
 
         <p>
-          In our visualizations, we use a solid glowing dot to represent a true event ($\Delta_i = 1$) and an open blue vertical hash mark to represent a censoring event ($\Delta_i = 0$).
-        </p>
-      </section>
-
-      {/* SECTION 3: RISK SET */}
-      <section className="sec" id="risk">
-        <div className="head">
-          <span className="id">§ 03</span>
-          <h2>The risk set</h2>
-        </div>
-
-        <p>
-          How do we estimate the survival function $S(t)$ when our data is censored? We cannot simply calculate the fraction of subjects who have survived past time $t$, because we do not know the fate of the censored subjects. 
+          In our visualizations, we use a solid amber dot to represent a true event ($\Delta_i = 1$) and an open blue vertical hash mark to represent a censoring event ($\Delta_i = 0$).
         </p>
 
         <p>
-          Instead, we calculate survival <span className="em">conditionally</span>. The fundamental concept required for this is the <span className="em">risk set</span>, denoted $R(t)$. The risk set is the collection of all subjects who are still under observation and have not yet experienced the event just prior to time $t$. We define two counts for any time $t$:
+          How do we estimate the survival function $S(t)$ when our data is censored like this? We cannot simply calculate the fraction of subjects who have survived past time $t$, because we do not know the fate of the censored subjects. 
+        </p>
+
+        <p>
+          Instead, we calculate survival <span className="em">conditionally</span>. The fundamental concept required for this is the <span className="em">risk set</span>, denoted $R(t)$. Subjects are considered to be "at risk" at time $t$ if their observed duration $Y_i$ is greater than or equal to $t$. This means they have neither experienced the event nor been censored strictly prior to $t$. Using our observable variables $Y_i$ and $\Delta_i$ for a population of size $N$, we define two counts for any time $t$:
         </p>
 
         <table className="dat fit">
           <tbody>
             <tr>
-              <td className="s">$n(t)$</td>
-              <td>$= |R(t)|$</td>
-              <td>the number of subjects at risk just before time $t$</td>
+              <td className="s">$r(t)$</td>
+              <td>{String.raw`$= \sum_{i=1}^N I(Y_i \ge t)$`}</td>
+              <td>the number of subjects at risk at time $t$</td>
             </tr>
             <tr>
               <td className="s">$d(t)$</td>
-              <td></td>
-              <td>the number of events occurring exactly at time $t$</td>
+              <td>{String.raw`$= \sum_{i=1}^N I(Y_i = t, \Delta_i = 1)$`}</td>
+              <td>the number of events occurring at time $t$</td>
             </tr>
           </tbody>
         </table>
@@ -240,41 +250,41 @@ function App() {
         <RiskSetSweeper />
       </section>
 
-      {/* SECTION 4: KAPLAN-MEIER */}
+      {/* SECTION 3: KAPLAN-MEIER */}
       <section className="sec" id="km">
         <div className="head">
-          <span className="id">§ 04</span>
+          <span className="id">§ 03</span>
           <h2>The Kaplan–Meier estimator</h2>
         </div>
 
         <p>
-          We can estimate the continuous survival function $S(t)$ non-parametrically using the product limit estimator derived by Kaplan and Meier in 1958.
+          We estimate the continuous survival function $S(t)$ non-parametrically using the product limit estimator derived by <a href="https://doi.org/10.1080/01621459.1958.10501452" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Kaplan and Meier (1958)</a>.
         </p>
 
         <p>
-          Let $t_1 &lt; t_2 &lt; \dots &lt; t_k$ be the distinct times at which at least one event occurs. For a given event time $t_j$, the probability of surviving past $t_j$, given that the subject survived up to $t_j$, is estimated by $(n(t_j) - d(t_j)) / n(t_j)$, which simplifies to $1 - d(t_j)/n(t_j)$. 
+          Let $t_1 &lt; t_2 &lt; \dots &lt; t_k$ be the distinct times at which at least one event occurs. At any specific event time $t_j$, there are $r(t_j)$ subjects at risk, and $d(t_j)$ events are observed. The fraction of subjects who successfully survive this specific moment is therefore $(r(t_j) - d(t_j)) / r(t_j)$, which simplifies to $1 - d(t_j)/r(t_j)$. 
         </p>
 
         <p>
-          Because surviving past time $t$ requires surviving past all preceding event times, we multiply these conditional probabilities together:
+          To survive past some later time $t$, a subject must successfully survive the first event time $t_1$, <span className="em">and</span> the second event time $t_2$, and so on, up to $t$. Because these conditional survival probabilities represent sequential steps, we multiply them together to find the overall probability of surviving past time $t$:
         </p>
 
         <div className="eq-row">
-          $$ \hat&#123;S&#125;(t) \;=\; \prod_&#123;j:\, t_j \le t&#125; \left( 1 - \frac&#123;d(t_j)&#125;&#123;n(t_j)&#125; \right) $$
-          <span className="ref">Eq. 4 — The Kaplan–Meier estimator.</span>
+          {String.raw`$$ \hat{S}(t) \;=\; \prod_{j:\, t_j \le t} \left( 1 - \frac{d(t_j)}{r(t_j)} \right) $$`}
+          <span className="ref">Eq. 3 — The Kaplan–Meier estimator.</span>
         </div>
 
         <KaplanMeierInteractive />
         
         <p>
-          Note that censoring events do not contribute directly to the product (they are not $t_j$ times), but they do drop the denominator $n(t)$ for all subsequent event times. This means that a subsequent event will cause a larger proportional drop in the survival curve than it would have if the censoring had not occurred. This is visually evident in the interactives above when you toggle a point from an event to being censored!
+          Censoring events drop the denominator $r(t)$, causing larger proportional drops in {String.raw`$\hat{S}(t)$`} for subsequent events.
         </p>
       </section>
 
-      {/* SECTION 5: COX MODEL */}
+      {/* SECTION 4: COX MODEL */}
       <section className="sec" id="cox">
         <div className="head">
-          <span className="id">§ 05</span>
+          <span className="id">§ 04</span>
           <h2>The Cox Proportional Hazards model</h2>
         </div>
 
