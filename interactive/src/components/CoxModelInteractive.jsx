@@ -156,7 +156,6 @@ const CoxModelInteractive = () => {
         </svg>
       </div>
       <div className="caption">
-        <span className="label" style={{color: 'var(--fg)', textTransform: 'uppercase', letterSpacing: '0.13em', marginRight: '0.6em'}}>Interactive 5</span>
         Adjust $\beta$ to see how the hazard function for Group 1 (Treatment) scales proportionally to the Baseline hazard, and how that translates to the survival curve. A positive $\beta$ increases hazard (decreases survival).
       </div>
     </div>

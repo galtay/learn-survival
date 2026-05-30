@@ -182,7 +182,6 @@ const KaplanMeierInteractive = () => {
         </svg>
       </div>
       <div className="caption">
-        <span className="label" style={{color: 'var(--fg)', textTransform: 'uppercase', letterSpacing: '0.13em', marginRight: '0.6em'}}>Interactive 4</span>
         Watch how changing an event to a censored observation prevents the curve from dropping, effectively "lifting" the tail of the estimate.
       </div>
     </div>

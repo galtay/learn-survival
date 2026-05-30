@@ -117,7 +117,6 @@ const CensoringVisualizer = () => {
         </svg>
       </div>
       <div className="caption">
-        <span className="label" style={{color: 'var(--fg)', textTransform: 'uppercase', letterSpacing: '0.13em', marginRight: '0.6em'}}>Interactive 2</span>
         Notice how censoring truncates the line. The unobserved true event times (dashed lines) are completely hidden from our dataset.
       </div>
     </div>
