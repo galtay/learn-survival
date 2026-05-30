@@ -40,6 +40,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Scale the whole layout to match a 125% browser zoom baseline. */
+  zoom: 1.25;
 }
 
 /* Base typography */
