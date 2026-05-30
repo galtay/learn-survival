@@ -32,7 +32,7 @@ const CensoringVisualizer = () => {
         <button
           className={`toggle ${showObserved ? 'active' : ''}`}
           onClick={() => setShowObserved(!showObserved)}
-          style={{ minWidth: '160px' }}
+          style={{ width: '152px' }}
         >
           {showObserved ? 'Show true T' : 'Show observed Y'}
         </button>

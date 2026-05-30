@@ -86,13 +86,10 @@ const MathSandbox = () => {
           />
           <span style={{ width: '40px', textAlign: 'right' }}>{lambda.toFixed(1)}</span>
         </div>
-        <div className="dim" style={{ fontSize: '12.5px', marginLeft: 'auto' }}>
-          Weibull Distribution
-        </div>
       </div>
       
       <div className="canvas">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 872" className="fourfns-svg diagram-svg" role="img" aria-label="Six functions sandbox">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 752" className="fourfns-svg diagram-svg" role="img" aria-label="Six functions sandbox">
           
           {/* Panel f(t) */}
           <g>
@@ -105,12 +102,6 @@ const MathSandbox = () => {
             <text x="62" y="146.5" className="tick-label" textAnchor="end">0.03</text>
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
             <text x="62" y="55.5" className="tick-label" textAnchor="end">0.06</text>
-            
-            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
-            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={fPath} className="curve"/>
           </g>
@@ -127,17 +118,11 @@ const MathSandbox = () => {
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
             <text x="62" y="55.5" className="tick-label" textAnchor="end">1.00</text>
             
-            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
-            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
-            
             <path d={FPath} className="curve"/>
           </g>
 
           {/* Panel S(t) */}
-          <g transform="translate(0, 264)">
+          <g transform="translate(0, 242)">
             <text x="68" y="42" className="panel-title">S(t)</text>
             <text x="370" y="42" className="panel-expr" textAnchor="end">P(T &ge; t) = 1 − F(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
@@ -148,17 +133,11 @@ const MathSandbox = () => {
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
             <text x="62" y="55.5" className="tick-label" textAnchor="end">1.00</text>
             
-            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
-            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
-            
             <path d={SPath} className="curve"/>
           </g>
 
           {/* Panel h(t) */}
-          <g transform="translate(384, 264)">
+          <g transform="translate(384, 242)">
             <text x="68" y="42" className="panel-title">h(t)</text>
             <text x="370" y="42" className="panel-expr" textAnchor="end">f(t) / S(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
@@ -169,17 +148,11 @@ const MathSandbox = () => {
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
             <text x="62" y="55.5" className="tick-label" textAnchor="end">0.4</text>
             
-            <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
-            <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
-            
             <path d={hPath} className="curve"/>
           </g>
           
           {/* Panel H(t) */}
-          <g transform="translate(0, 528)">
+          <g transform="translate(0, 484)">
             <text x="68" y="42" className="panel-title">H(t)</text>
             <text x="370" y="42" className="panel-expr" textAnchor="end">cumulative hazard</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
@@ -200,7 +173,7 @@ const MathSandbox = () => {
           </g>
 
           {/* Panel log S(t) */}
-          <g transform="translate(384, 528)">
+          <g transform="translate(384, 484)">
             <text x="68" y="42" className="panel-title">log S(t)</text>
             <text x="370" y="42" className="panel-expr" textAnchor="end">−H(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
@@ -220,13 +193,10 @@ const MathSandbox = () => {
             <path d={logSPath} className="curve"/>
           </g>
           
-          <text x="396" y="820" className="caption2" style={{fill: 'var(--fg-2)', fontSize: '11.5px', fontFamily: 'var(--sans)'}} textAnchor="middle">
-            Interactive: Drag the sliders to see how shape $k$ and scale $\lambda$ alter the continuous functions.
-          </text>
         </svg>
       </div>
       <div className="caption">
-        The functions $f$, $F$, $S$, $h$, $H$, and $\log S$ linked dynamically. At $k = 1$ the hazard is constant (exponential); for $k &gt; 1$ it accelerates with time.
+        The functions $f$, $F$, $S$, $h$, $H$, and $\log S$ linked dynamically. At $k = 1$ the hazard is constant (exponential); for $k &gt; 1$ it accelerates with time. (Weibull distribution)
       </div>
     </div>
   );

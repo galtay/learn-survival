@@ -10,7 +10,7 @@ export default function SectionKM() {
       </div>
 
       <p>
-        We estimate the continuous survival function $S(t)$ non-parametrically using the product limit estimator derived by <a href="https://doi.org/10.1080/01621459.1958.10501452" target="_blank" rel="noreferrer" style={{color: 'var(--accent)', textDecoration: 'none'}}>Kaplan and Meier (1958)</a>.
+        We estimate the continuous survival function $S(t)$ non-parametrically using the product limit estimator derived by <a href="https://doi.org/10.1080/01621459.1958.10501452" target="_blank" rel="noreferrer">Kaplan and Meier (1958)</a>.
       </p>
 
       <p>

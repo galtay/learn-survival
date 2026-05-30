@@ -118,12 +118,12 @@ const CoxModelInteractive = () => {
             <g transform={`translate(${mx + 20}, ${my + 20})`}>
               <line x1="0" y1="0" x2="20" y2="0" stroke="var(--fg-1)" strokeWidth="2" />
               <text x="28" y="4" className="tick-label" fill="var(--fg-1)">X=0 (Baseline)</text>
-              <line x1="0" y1="20" x2="20" y2="20" stroke="var(--accent)" strokeWidth="2" />
-              <text x="28" y="24" className="tick-label" fill="var(--accent)">X=1 (Treatment)</text>
+              <line x1="0" y1="20" x2="20" y2="20" stroke="var(--fg)" strokeWidth="2" strokeDasharray="5 3" />
+              <text x="28" y="24" className="tick-label" fill="var(--fg)">X=1 (Treatment)</text>
             </g>
 
             <path d={pathH0} fill="none" stroke="var(--fg-1)" strokeWidth="2" />
-            <path d={pathH1} fill="none" stroke="var(--accent)" strokeWidth="2" />
+            <path d={pathH1} fill="none" stroke="var(--fg)" strokeWidth="2" strokeDasharray="5 3" />
           </g>
 
           {/* RIGHT PANEL: Survival Functions */}
@@ -150,7 +150,7 @@ const CoxModelInteractive = () => {
             ))}
 
             <path d={pathS0} fill="none" stroke="var(--fg-1)" strokeWidth="2" />
-            <path d={pathS1} fill="none" stroke="var(--accent)" strokeWidth="2" />
+            <path d={pathS1} fill="none" stroke="var(--fg)" strokeWidth="2" strokeDasharray="5 3" />
           </g>
           
         </svg>

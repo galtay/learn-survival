@@ -53,8 +53,8 @@ const RiskSetSweeper = () => {
   return (
     <div className="interactive-widget">
       <div className="controls">
-        <button className={`toggle ${isPlaying ? 'active' : ''}`} onClick={togglePlay} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', minWidth: '110px' }}>
-          {isPlaying ? <Square size={14} /> : <Play size={14} />}
+        <button className={`toggle ${isPlaying ? 'active' : ''}`} onClick={togglePlay} style={{ gap: '5px', width: '120px' }}>
+          {isPlaying ? <Square /> : <Play />}
           {isPlaying ? 'Stop' : 'Sweep Time'}
         </button>
         <div className="control-group" style={{ marginLeft: '1rem' }}>
@@ -69,7 +69,7 @@ const RiskSetSweeper = () => {
           <span style={{ width: '40px', textAlign: 'right' }}>{t.toFixed(1)}</span>
         </div>
         
-        <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '15px', color: 'var(--accent)' }}>
+        <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '15px', color: 'var(--fg)' }}>
           r({t.toFixed(1)}) = {r_t}
         </div>
       </div>
