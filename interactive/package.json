@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:single": "vite build && cp dist/index.html ../interactive_survival.html",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "katex": "^0.16.45",
-    "lucide-react": "^1.14.0",
+    "lucide-react": "^1.17.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
@@ -24,7 +25,6 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
-    "puppeteer": "^25.1.0",
     "vite": "^8.0.12",
     "vite-plugin-singlefile": "^2.3.3"
   }

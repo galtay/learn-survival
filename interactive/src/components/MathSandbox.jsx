@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 
 const MathSandbox = () => {
-  const [k, setK] = useState(2);
-  const [lambda, setLambda] = useState(16.8);
+  const [k, setK] = useState(1.5);
+  const [lambda, setLambda] = useState(20);
 
-  const points = 50;
-  const tMax = 30;
+  const points = 80;
+  const tMax = 60;
 
   // Generate data points
   const data = useMemo(() => {
@@ -50,13 +50,13 @@ const MathSandbox = () => {
   const fPath = makePath(data, d => d.f, 0.06);
   const FPath = makePath(data, d => d.F, 1.0);
   const SPath = makePath(data, d => d.s, 1.0);
-  const hPath = makePath(data, d => d.h, 0.22); // scale relative to original plot
-  const HPath = makePath(data, d => d.H, 6.0); // max H around (30/16.8)^3 ~ 5.6
-  
-  // Custom path for log S(t) to map 0 to top, -6 to bottom
+  const hPath = makePath(data, d => d.h, 0.4);
+  const HPath = makePath(data, d => d.H, 12.0);
+
+  // Custom path for log S(t) to map 0 to top, -12 to bottom
   const logSPath = data.map((d, i) => {
     const x = scaleX(d.t);
-    const y = yMax - ((d.logS + 6) / 6.0) * (yMax - my);
+    const y = yMax - ((d.logS + 12) / 12.0) * (yMax - my);
     const clampedY = Math.max(0, Math.min(y, yMax));
     return `${i === 0 ? 'M' : 'L'} ${x} ${clampedY}`;
   }).join(' ');
@@ -66,22 +66,22 @@ const MathSandbox = () => {
       <div className="controls">
         <div className="control-group">
           <label>Shape ($k$):</label>
-          <input 
-            type="range" 
-            min="0.5" max="3" step="0.1" 
-            value={k} 
-            onChange={e => setK(parseFloat(e.target.value))} 
+          <input
+            type="range"
+            min="1" max="2" step="0.1"
+            value={k}
+            onChange={e => setK(parseFloat(e.target.value))}
             style={{ width: '120px' }}
           />
           <span style={{ width: '30px', textAlign: 'right' }}>{k.toFixed(1)}</span>
         </div>
         <div className="control-group">
           <label>Scale ($\lambda$):</label>
-          <input 
-            type="range" 
-            min="5" max="30" step="0.5" 
-            value={lambda} 
-            onChange={e => setLambda(parseFloat(e.target.value))} 
+          <input
+            type="range"
+            min="18" max="30" step="0.5"
+            value={lambda}
+            onChange={e => setLambda(parseFloat(e.target.value))}
             style={{ width: '120px' }}
           />
           <span style={{ width: '40px', textAlign: 'right' }}>{lambda.toFixed(1)}</span>
@@ -107,9 +107,9 @@ const MathSandbox = () => {
             <text x="62" y="55.5" className="tick-label" textAnchor="end">0.06</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={fPath} className="curve"/>
@@ -128,9 +128,9 @@ const MathSandbox = () => {
             <text x="62" y="55.5" className="tick-label" textAnchor="end">1.00</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={FPath} className="curve"/>
@@ -149,9 +149,9 @@ const MathSandbox = () => {
             <text x="62" y="55.5" className="tick-label" textAnchor="end">1.00</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={SPath} className="curve"/>
@@ -163,16 +163,16 @@ const MathSandbox = () => {
             <text x="370" y="42" className="panel-expr" textAnchor="end">f(t) / S(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
             <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
-            <text x="62" y="237.5" className="tick-label" textAnchor="end">0.00</text>
+            <text x="62" y="237.5" className="tick-label" textAnchor="end">0.0</text>
             <line x1="68" y1="143" x2="370" y2="143" className="grid"/>
-            <text x="62" y="146.5" className="tick-label" textAnchor="end">0.11</text>
+            <text x="62" y="146.5" className="tick-label" textAnchor="end">0.2</text>
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
-            <text x="62" y="55.5" className="tick-label" textAnchor="end">0.22</text>
+            <text x="62" y="55.5" className="tick-label" textAnchor="end">0.4</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={hPath} className="curve"/>
@@ -186,14 +186,14 @@ const MathSandbox = () => {
             <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
             <text x="62" y="237.5" className="tick-label" textAnchor="end">0</text>
             <line x1="68" y1="143" x2="370" y2="143" className="grid"/>
-            <text x="62" y="146.5" className="tick-label" textAnchor="end">3</text>
+            <text x="62" y="146.5" className="tick-label" textAnchor="end">6</text>
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
-            <text x="62" y="55.5" className="tick-label" textAnchor="end">6</text>
+            <text x="62" y="55.5" className="tick-label" textAnchor="end">12</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={HPath} className="curve"/>
@@ -205,16 +205,16 @@ const MathSandbox = () => {
             <text x="370" y="42" className="panel-expr" textAnchor="end">−H(t)</text>
             <path d="M 68 52 L 68 234 L 370 234" className="axis"/>
             <line x1="68" y1="234" x2="370" y2="234" className="grid"/>
-            <text x="62" y="237.5" className="tick-label" textAnchor="end">−6</text>
+            <text x="62" y="237.5" className="tick-label" textAnchor="end">−12</text>
             <line x1="68" y1="143" x2="370" y2="143" className="grid"/>
-            <text x="62" y="146.5" className="tick-label" textAnchor="end">−3</text>
+            <text x="62" y="146.5" className="tick-label" textAnchor="end">−6</text>
             <line x1="68" y1="52" x2="370" y2="52" className="grid"/>
             <text x="62" y="55.5" className="tick-label" textAnchor="end">0</text>
             
             <text x="68" y="250" className="tick-label" textAnchor="middle">0</text>
-            <text x="168.667" y="250" className="tick-label" textAnchor="middle">10</text>
-            <text x="269.333" y="250" className="tick-label" textAnchor="middle">20</text>
-            <text x="370" y="250" className="tick-label" textAnchor="middle">30</text>
+            <text x="168.667" y="250" className="tick-label" textAnchor="middle">20</text>
+            <text x="269.333" y="250" className="tick-label" textAnchor="middle">40</text>
+            <text x="370" y="250" className="tick-label" textAnchor="middle">60</text>
             <text x="219" y="260" className="axis-title" textAnchor="middle">t (duration)</text>
             
             <path d={logSPath} className="curve"/>
@@ -226,7 +226,7 @@ const MathSandbox = () => {
         </svg>
       </div>
       <div className="caption">
-        The functions $f$, $F$, $S$, $h$, $H$, and $\log S$ linked dynamically. Watch how a decreasing hazard ($k &lt; 1$) fundamentally reshapes the survival probability.
+        The functions $f$, $F$, $S$, $h$, $H$, and $\log S$ linked dynamically. At $k = 1$ the hazard is constant (exponential); for $k &gt; 1$ it accelerates with time.
       </div>
     </div>
   );

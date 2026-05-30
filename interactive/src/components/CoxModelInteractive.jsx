@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 
 const CoxModelInteractive = () => {
-  const [beta, setBeta] = useState(0.8);
+  const [beta, setBeta] = useState(-0.7);
   
   // Weibull baseline parameters
   const lambda = 20;

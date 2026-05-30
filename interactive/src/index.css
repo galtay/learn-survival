@@ -85,6 +85,10 @@ main {
 }
 .appbar .crumbs .sep { color: var(--fg-3); padding: 0 0.4em; }
 .appbar .crumbs .here { color: var(--fg); }
+.appbar .nav { display: flex; gap: 1rem; }
+.appbar .nav a,
+.appbar .nav a:visited { color: var(--fg-2); text-decoration: none; transition: color 0.15s; }
+.appbar .nav a:hover { color: var(--fg); }
 
 /* Masthead */
 header.masthead {

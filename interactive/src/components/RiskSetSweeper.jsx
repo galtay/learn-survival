@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Square } from 'lucide-react';
 import { getObservedCohort } from '../cohortData';
 
 const RiskSetSweeper = () => {
   const [t, setT] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const tRef = useRef(0);
 
   // The cohort from the previous section
   const cohort = getObservedCohort();
@@ -14,29 +15,33 @@ const RiskSetSweeper = () => {
   const xMax = 768;
   const scaleX = (val) => mx + (val / tMax) * (xMax - mx);
 
-  // Animation loop
-  useEffect(() => {
-    let frame;
-    if (isPlaying) {
-      const start = performance.now();
-      const startT = t;
-      const duration = 5000; // 5 seconds to sweep 0 -> 28
+  // Keep ref in sync so the animation loop can read the latest t
+  // (e.g. after a slider drag) without re-creating itself.
+  useEffect(() => { tRef.current = t; }, [t]);
 
-      const animate = (now) => {
-        const elapsed = now - start;
-        const progress = elapsed / duration;
-        let nextT = startT + progress * tMax;
-        if (nextT >= tMax) {
-          nextT = tMax;
-          setIsPlaying(false);
-        }
-        setT(nextT);
-        if (nextT < tMax) frame = requestAnimationFrame(animate);
-      };
+  // Animation loop — runs once per play/stop toggle, not per frame.
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const start = performance.now();
+    const startT = tRef.current;
+    const duration = 5000; // 5 seconds to sweep 0 -> tMax
+    let frame;
+
+    const animate = (now) => {
+      const elapsed = now - start;
+      const nextT = startT + (elapsed / duration) * tMax;
+      if (nextT >= tMax) {
+        setT(tMax);
+        setIsPlaying(false);
+        return;
+      }
+      setT(nextT);
       frame = requestAnimationFrame(animate);
-    }
+    };
+    frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [isPlaying, t]);
+  }, [isPlaying]);
 
   const togglePlay = () => {
     if (t >= tMax) setT(0);
@@ -48,8 +53,8 @@ const RiskSetSweeper = () => {
   return (
     <div className="interactive-widget">
       <div className="controls">
-        <button className={`toggle ${isPlaying ? 'active' : ''}`} onClick={togglePlay} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          {isPlaying ? <Square size={14} /> : <Play size={14} />} 
+        <button className={`toggle ${isPlaying ? 'active' : ''}`} onClick={togglePlay} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', minWidth: '110px' }}>
+          {isPlaying ? <Square size={14} /> : <Play size={14} />}
           {isPlaying ? 'Stop' : 'Sweep Time'}
         </button>
         <div className="control-group" style={{ marginLeft: '1rem' }}>

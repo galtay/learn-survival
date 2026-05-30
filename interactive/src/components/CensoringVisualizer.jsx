@@ -29,14 +29,15 @@ const CensoringVisualizer = () => {
   return (
     <div className="interactive-widget">
       <div className="controls">
-        <button 
-          className={`toggle ${showObserved ? 'active' : ''}`} 
+        <button
+          className={`toggle ${showObserved ? 'active' : ''}`}
           onClick={() => setShowObserved(!showObserved)}
+          style={{ minWidth: '160px' }}
         >
-          {showObserved ? 'Show True Event Times (T)' : 'Apply Censoring (Observe Y)'}
+          {showObserved ? 'Show true T' : 'Show observed Y'}
         </button>
         <div ref={textRef} style={{ marginLeft: '1rem', fontFamily: 'var(--sans)', fontSize: '13px', color: 'var(--fg-2)' }}>
-          {showObserved 
+          {showObserved
             ? <span>Currently viewing observed durations $Y = \min(T, C)$</span>
             : <span>Currently viewing true event times $T$</span>}
         </div>

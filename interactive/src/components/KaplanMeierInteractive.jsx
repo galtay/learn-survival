@@ -77,7 +77,7 @@ const KaplanMeierInteractive = () => {
     <div className="interactive-widget">
       <div className="controls">
         <div style={{ fontFamily: 'var(--sans)', fontSize: '14px', color: 'var(--fg)' }}>
-          Click an event glyph on the left to toggle between <span style={{color: 'var(--accent)'}}>Event</span> and <span style={{color: 'var(--censor)'}}>Censored</span>.
+          Click any subject's marker on the left to toggle between <span style={{color: 'var(--accent)'}}>Event</span> and <span style={{color: 'var(--censor)'}}>Censored</span>.
         </div>
         <button 
           className="toggle" 
